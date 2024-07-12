@@ -1,27 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:kondebili_collect/dashboard.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+
+import '../models/databaseHelpers.dart';
+import 'dashboard.dart';
+
+
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  final database = openDatabase(
-      join(await getDatabasesPath(), 'formulaire_database.db'),
 
-    onCreate: (db, version) {
-      // Run the CREATE TABLE statement on the database.
-      return db.execute(
-        'CREATE TABLE dogs(id INTEGER PRIMARY KEY, name TEXT, age INTEGER)',
-      );
-    },
-    version: 1,
+  /// Initialiser la base de données
+  await initializeDatabase();
+
+  final database = openDatabase(
+    join(await getDatabasesPath(), 'formulaire_database.db'),
   );
+
   runApp(const MyApp());
 }
+
+
+/// Méthode pour initialiser et créer la table
+Future<void> initializeDatabase() async {
+
+  /// Supprimer la base de données existante
+/*  String path = join(await getDatabasesPath(), 'formulaire_database.db');
+  await deleteDatabase(path);*
+  print('Database deleted: $path');
+ */
+  /// Initialiser la nouvelle base de données
+  await DatabaseHelper().database;
+  print('Database initialized'); // Log pour vérifier que la base de données est initialisée
+}
+
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
